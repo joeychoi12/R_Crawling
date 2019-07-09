@@ -5,6 +5,7 @@ library(rvest)
 library(stringr)
 library(XML)
 library(dplyr)
+library(xlsx)
 trim <- function (x) gsub("^\\s+|\\s+$", "", x)
 trim2 <- function(x) gsub("\\n","",x)
 trim3 <- function(x) gsub("\\t","",x)
@@ -44,9 +45,9 @@ df_daum.review <-  data.frame(rating = daum.grade, user_review = daum.review, da
 write.xlsx(df_daum.review,"다음 기생충 평점.xlsx")
 mean(as.numeric(as.character(df_daum.review$rating)))
 mean(as.numeric((as.character(daum.grade))))
-
+df_daum.review <- read.xlsx(sheetName = "다음 기생충 평점.xlsx")
 View(df_daum.review)
-
+df_daum.review <-read.xlsx("다음 기생충 평점.xlsx", sheetName = "Sheet1",encoding = "UTF-8")
 
 # Word cloud of review words to see what words user used to describe the movie 
 library(wordcloud2)
@@ -85,6 +86,9 @@ library(ggplot2)
 theme_set(theme_classic()) # change the theme to my preferece 
 View(df_daum.review)
 df_daum.review$rating <- as.numeric(as.character(df_daum.review$rating))
+names(df_daum.review)
+df_daum.review <- df_daum.review %>%
+  select(rating,user_review,date)
 names(df_daum.review) <- c("rating"   ,   "user_review", "date_time"  )
 df_daum.review$date <- substr(df_daum.review$date_time,1,10)
 df_daum.review$time <- substr(df_daum.review$date_time,13,17)
@@ -176,6 +180,21 @@ ggplot(sort.people.time, aes(hour,Count)) + geom_col() + geom_vline(xintercept =
   scale_fill_gradient(low="blue", high="red") + ggtitle("Number of Reviews written per time") +
   geom_text(aes(x=ps.release.date, label="Release Date \n 692 People", y=730), colour="black", text=element_text(size=11))
 
-daum.p1
-daum.p2
-daum.p3
+
+
+# bar graph on hour and num of peopel who wrote reviews 
+bar_count_hour_reviews <- df_daum.review %>% 
+  group_by(hour) %>%
+  summarise(Count = n(),rating = mean(rating))
+bar_count_hour_reviews
+hour <- substr(time.sort.people.time$time,1,2)
+time.
+sort.people.hour
+View(time.sort.people.time)
+
+
+
+p2 <- ggplot(bar_count_hour_reviews, aes(hour,Count,fill = rating)) + geom_col()+
+  scale_fill_gradient(low="blue", high="red") + ggtitle("[다음] 시간별 리뷰건수")+
+  theme(plot.title = element_text(face = "bold", hjust = 0.5, size = 15, color = "darkblue"))
+  

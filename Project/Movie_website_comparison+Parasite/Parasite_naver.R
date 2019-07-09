@@ -156,4 +156,24 @@ library(xlsx)
 write.csv(df_naver.review,"네이버평점_df")
 write.xlsx(df_naver.review,file = "naver_Parasite.xlsx")
 
+df_naver.review
+# bar graph on hour and num of peopel who wrote reviews 
+df_naver.review$rating <- as.numeric(as.character(df_naver.review$rating))
+names(df_naver.review) <- c("rating"   ,   "user_review", "date_time"    )
+df_naver.review$date <- substr(df_naver.review$date,1,10)
+df_naver.review$time <- substr(df_naver.review$date_time,12,16)
+df_naver.review$hour <- substr(df_naver.review$date_time,12,13)
 
+bar_count_hour_reviews <- df_naver.review %>% 
+  group_by(hour) %>%
+  summarise(Count = n(),rating = mean(rating))
+bar_count_hour_reviews
+
+par(mfrow=c(2,2))
+p1
+p1 <- ggplot(bar_count_hour_reviews, aes(hour,Count,fill = rating)) + geom_col()+
+  scale_fill_gradient(low="blue", high="red") + ggtitle("[네이버] 시간별 리뷰건수")+
+  theme(plot.title = element_text(face = "bold", hjust = 0.5, size = 15, color = "darkblue"))
+install.packages("gridExtra")
+library(gridExtra)
+grid.arrange(p1,p2)
